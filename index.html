@@ -93,7 +93,7 @@
           widget.setAttribute('key', '260b3f463adaac920f28acc20b34539ec90a9bec');
           widget.setAttribute('position', 'center');
           widget.setAttribute('live', 'true');
-          widget.setAttribute('callback', `http://127.0.0.1:5500/Frontend/success.html?phone=${encodeURIComponent(phoneNumber)}`);
+          widget.setAttribute('callback', `https://paiement-routier.vercel.app/success.html?phone=${encodeURIComponent(phoneNumber)}`);
           
           document.getElementById('payment-container').appendChild(widget);
         } else {
