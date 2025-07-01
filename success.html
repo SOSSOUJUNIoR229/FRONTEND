@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Paiement terminé</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 2rem;
+      background-color: #f5f5f5;
+    }
+    h2 {
+      color: #4CAF50;
+    }
+    #fini {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 20px 2px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    #countdown {
+      font-size: 14px;
+      color: #666;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Paiement effectué avec succès.</h2>
+  <p>Merci pour votre paiement. Vous serez redirigé automatiquement.</p>
+  <button id="fini" onclick="enregistrerTransaction()">Retour au tableau de bord</button>
+  <div id="countdown">Redirection automatique dans 10 secondes...</div>
+
+  <script>
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    const phoneNumber = getQueryParam('phone');
+    let transactionEnregistree = false;
+
+    function enregistrerTransaction() {
+      if (transactionEnregistree) return;
+      transactionEnregistree = true;
+
+      const date = new Date();
+      const payload = {
+        phone: phoneNumber,
+        montant: 400,
+        date: date.toLocaleDateString(),
+        heure: date.toLocaleTimeString()
+      };
+
+      // ✅ Enregistrement transaction
+      fetch("https://backend-8dxn.onrender.com/api/transactions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert("Transaction enregistrée avec succès !");
+      })
+      .catch(error => {
+        alert("Erreur lors de l'enregistrement de la transaction");
+        console.error(error);
+      });
+
+      // ✅ Notifier l'ESP via le serveur
+      fetch("https://backend-8dxn.onrender.com/fin", {
+        method: "POST",
+        headers: { "Content-Type": "text/plain" },
+        body: "Finit"
+      });
+    }
+
+    let seconds = 3;
+    const countdownElement = document.getElementById('countdown');
+    const countdownInterval = setInterval(() => {
+      seconds--;
+      countdownElement.textContent = `Redirection automatique dans ${seconds} secondes...`;
+
+      if (seconds <= 0) {
+        clearInterval(countdownInterval);
+        enregistrerTransaction();
+      }
+    }, 1000);
+  </script>
+</body>
+</html>

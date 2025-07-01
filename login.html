@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>Formulaire d'inscription</title>
+  <style>
+    .password-wrapper {
+      position: relative;
+    }
+
+    .password-wrapper input[type="password"],
+    .password-wrapper input[type="text"] {
+      padding-right: 35px;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-html">
+      <input id="tab-1" type="radio" name="tab" class="sign-in" checked /><label for="tab-1" class="tab">Se connecter</label>
+      <input id="tab-2" type="radio" name="tab" class="sign-up" /><label for="tab-2" class="tab">S'inscrire</label>
+      <div class="login-form">
+        <!-- Connexion -->
+        <div class="sign-in-htm">
+          <div class="group">
+            <label for="user" class="label">NOM</label>
+            <input id="user" type="text" class="input" />
+          </div>
+          <div class="group password-wrapper">
+            <label for="pass-login" class="label">Mot de passe</label>
+            <input id="pass-login" type="password" class="input" />
+            <span class="toggle-password" onclick="togglePassword('pass-login', this)">👁️</span>
+          </div>
+          <div class="group">
+            <input id="check" type="checkbox" class="check" checked />
+            <label for="check"><span class="icon"></span> Me garder connecter</label>
+          </div>
+          <div class="group">
+            <input type="submit" class="button" value="S'inscrire" />
+          </div>
+          <div class="hr"></div>
+          <div class="foot-lnk">
+            <a href="#forgot">mot de passe oublier ?</a>
+          </div>
+        </div>
+
+        <!-- Inscription -->
+        <div class="sign-up-htm">
+          <div class="group">
+            <label for="fullname" class="label">NOM ET PRENOM</label>
+            <input id="fullname" type="text" class="input" />
+          </div>
+          <div class="group">
+            <label for="email" class="label">Email</label>
+            <input id="email" type="text" class="input" />
+          </div>
+          <div class="group">
+            <label for="momo" class="label">Numéro momo</label>
+            <input id="momo" type="text" class="input" />
+          </div>
+          <div class="group password-wrapper">
+            <label for="pass-signup" class="label">Mot de passe</label>
+            <input id="pass-signup" type="password" class="input" />
+            <span class="toggle-password" onclick="togglePassword('pass-signup', this)">👁️</span>
+          </div>
+          <div class="group">
+            <input type="submit" class="button" value="Se connecter" />
+          </div>
+          <div class="hr"></div>
+          <div class="foot-lnk">
+            <label for="tab-1">Se rappeler de moi</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function togglePassword(inputId, iconElement) {
+      const input = document.getElementById(inputId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        iconElement.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        iconElement.textContent = '👁️';
+      }
+    }
+  </script>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Formulaire d'inscription
+    const signupButton = document.querySelector('.sign-up-htm .button');
+    signupButton.addEventListener('click', async (e) => {
+      e.preventDefault();
+
+      const fullname = document.getElementById('fullname').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const momo = document.getElementById('momo').value.trim();
+      const password = document.getElementById('pass-signup').value;
+
+      const res = await fetch('https://backend-8dxn.onrender.com/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fullname, email, momo, password })
+      });
+
+      const data = await res.json();
+      alert(data.message);
+    });
+
+    // Formulaire de connexion
+    const signinButton = document.querySelector('.sign-in-htm .button');
+    signinButton.addEventListener('click', async (e) => {
+      e.preventDefault();
+
+      const fullname = document.getElementById('user').value.trim();
+      const password = document.getElementById('pass-login').value;
+
+      const res = await fetch('https://backend-8dxn.onrender.com/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fullname, password })
+      });
+
+      const data = await res.json();
+      alert(data.message);
+
+  if (res.status === 200 && data.redirect && data.user) {
+  // Stocker l'utilisateur dans le localStorage
+  localStorage.setItem('user', JSON.stringify(data.user));
+
+  // Rediriger vers le dashboard
+  window.location.href = data.redirect;
+}
+
+    });
+  });
+</script>
+
+</body>
+</html>

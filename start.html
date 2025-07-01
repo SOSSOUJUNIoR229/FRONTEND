@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Start</title>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+  <button id="start" onclick="window.location.href='index.html'">Payer</button>
+
+  <script>
+    const socket = io("https://backend-8dxn.onrender.com"); // URL de ton serveur
+
+    socket.on("start-paiement", () => {
+      console.log("Evénement reçu, clic automatique sur start");
+      const btn = document.getElementById("start");
+      if (btn) btn.click();
+      else console.error("Bouton start introuvable !");
+    });
+  </script>
+</body>
+</html>
